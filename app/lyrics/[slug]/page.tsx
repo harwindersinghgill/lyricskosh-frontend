@@ -1,8 +1,9 @@
 // app/lyrics/[slug]/page.tsx
 import { getPostBySlug } from "@/lib/data-fetching";
+import type { PageProps } from 'next'; // Official Next.js type for Page Props
 
-// This is the simplified component definition that resolves the build error.
-export default async function LyricPage({ params }: { params: { slug: string } }) {
+// Note the updated type signature for the component
+export default async function LyricPage({ params }: PageProps<{ slug: string }>) {
   const post = await getPostBySlug(params.slug);
 
   if (!post) {
