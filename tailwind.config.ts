@@ -9,21 +9,15 @@ const config: Config = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {
-      // We keep extend for future additions, but define primary colors outside it
-    },
-    // Define our core color palette here
+    extend: {},
     colors: {
-      // Add transparent and current to keep tailwind's defaults
       transparent: 'transparent',
       current: 'currentColor',
-      // Light Mode
       background: '#FAF7F0',
       text: '#1C1C1C',
       primary: '#D4AF37',
       secondary: '#A9A9A9',
       hover: '#B89B2E',
-      // Dark Mode
       'dark-background': '#1F1F1F',
       'dark-text': '#F1F1F1',
       'dark-primary': '#EACD63',
@@ -31,6 +25,7 @@ const config: Config = {
       'dark-hover': '#F0D880',
     },
   },
-  plugins: [],
+  // Add the typography plugin here
+  plugins: [require("@tailwindcss/typography")],
 };
 export default config;
