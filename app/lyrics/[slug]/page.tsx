@@ -1,9 +1,11 @@
 // app/lyrics/[slug]/page.tsx
+
+// Tell Next/Cloudflare to run this route on the Edge runtime.
+export const runtime = 'edge';
+
 import { getPostBySlug } from "@/lib/data-fetching";
 
-// Using 'props: any' to bypass the persistent build environment type error.
 export default async function LyricPage(props: any) {
-  // Safely extract the slug from the props
   const slug = props?.params?.slug;
 
   if (!slug) {
