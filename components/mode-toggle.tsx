@@ -5,8 +5,22 @@ import * as React from "react"
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 
+// NEW: We add useEffect to prevent this component from rendering on the server
 export function ModeToggle() {
+  const [mounted, setMounted] = React.useState(false)
   const { setTheme, theme } = useTheme()
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return (
+      <button className="p-2 rounded-md" disabled>
+        <Sun className="h-[1.2rem] w-[1.2rem]" />
+      </button>
+    )
+  }
 
   return (
     <button

@@ -5,18 +5,14 @@ const base64 = require('base-64');
 function getAuthHeaders() {
   const WP_USER = process.env.WP_USER ?? '';
   const WP_PASSWORD = process.env.WP_PASSWORD ?? '';
+  const WORDPRESS_AUTH_KEY = process.env.WORDPRESS_AUTH_KEY ?? '';
+
   return {
     'Authorization': 'Basic ' + base64.encode(`${WP_USER}:${WP_PASSWORD}`),
     'Content-Type': 'application/json',
+    'x-custom-auth-key': WORDPRESS_AUTH_KEY
   };
 }
-
-export type Post = {
-  id: number;
-  title: { rendered: string; };
-  content: { rendered: string; };
-  slug: string;
-};
 
 // RESTORED AND CORRECTED: This function is for the homepage and now queries the 'language' taxonomy
 export async function getPostsByCategory(categorySlug: string): Promise<Post[]> {

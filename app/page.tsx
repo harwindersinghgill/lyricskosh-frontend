@@ -50,20 +50,23 @@ function PostGrid({ posts }: { posts: Awaited<ReturnType<typeof getPostsByCatego
       {posts.map((post) => {
         const titleParts = post.title.rendered.split(' | ');
         const songTitle = titleParts[0];
+        // CORRECTED: Use a proper <p> tag for the artists
         const artists = titleParts.slice(1).join(', ');
 
         return (
           <a href={`/lyrics/${post.slug}`} key={post.id} className="block group">
-            <Card className="h-full border-secondary/20 dark:border-dark-secondary/20 group-hover:border-primary dark:group-hover:border-dark-primary transition-all duration-300 transform group-hover:scale-105">
+            <Card className="h-full border-secondary/20 dark:border-dark-secondary/20 bg-background dark:bg-dark-background group-hover:border-primary dark:group-hover:border-dark-primary transition-all duration-300 transform group-hover:scale-105">
               <CardHeader>
                 <CardTitle 
-                  className="text-lg font-bold text-text dark:text-dark-text"
+                  className="text-lg font-bold"
                   dangerouslySetInnerHTML={{ __html: songTitle }}
                 />
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-secondary dark:text-dark-secondary truncate"
-                   dangerouslySetInnerHTML={{ __html: artists }}
+                {/* CORRECTED: Render artists in a paragraph, which is visible */}
+                <p 
+                    className="text-sm text-secondary dark:text-dark-secondary truncate"
+                    dangerouslySetInnerHTML={{ __html: artists }}
                 />
               </CardContent>
             </Card>
