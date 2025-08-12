@@ -1,6 +1,12 @@
 // app/lyrics/[slug]/page.tsx
 
-// Define the types for a single post's data
+// Define a more explicit type for the page's props, as expected by Next.js
+type PageProps = {
+  params: { slug: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
+};
+
+// Define the type for a single post's data
 type Post = {
   id: number;
   title: {
@@ -21,11 +27,9 @@ async function getPost(slug: string) {
     'CF-Access-Client-Secret': process.env.CF_CLIENT_SECRET || ''
   };
 
-  // We add `&slug=${slug}` to get the specific post we want
   const res = await fetch(`${process.env.NEXT_PUBLIC_WORDPRESS_API_URL}/wp/v2/posts?_fields=id,title,content&slug=${slug}`, {
     headers: headers,
-    // Use Next.js's caching feature to re-fetch data periodically
-    next: { revalidate: 3600 } // Revalidate every hour
+    next: { revalidate: 3600 } 
   });
 
   if (!res.ok) {
@@ -33,24 +37,27 @@ async function getPost(slug: string) {
   }
 
   const posts: Post[] = await res.json();
-  // The API returns an array, so we return the first (and only) item
   return posts[0];
 }
 
-// This is the main component for the lyrics page
-export default async function LyricPage({ params }: { params: { slug: string } }) {
+// This is the main component for the lyrics page. Note the updated type for props.
+export default async function LyricPage({ params }: PageProps) {
   const post = await getPost(params.slug);
+
+  // Add a check in case a post is not found
+  if (!post) {
+    return <div>Post not found.</div>;
+  }
 
   return (
     <main className="flex min-h-screen flex-col items-center p-24">
       <div className="w-full max-w-2xl">
         <h1 
           className="text-4xl font-bold mb-8 text-center"
-          // We use dangerouslySetInnerHTML because WordPress titles can contain special characters
           dangerouslySetInnerHTML={{ __html: post.title.rendered }}
         />
         <div 
-          className="prose lg:prose-xl" // Basic styling for the content
+          className="prose lg:prose-xl"
           dangerouslySetInnerHTML={{ __html: post.content.rendered }}
         />
       </div>
