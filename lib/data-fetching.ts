@@ -18,13 +18,22 @@ export type Post = {
   slug: string;
 };
 
-// This is the only function we need now for the lyrics pages.
+// RESTORED: This function is required by the homepage.
+export async function getAllPosts(): Promise<Post[]> {
+  const headers = getAuthHeaders();
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WORDPRESS_API_URL}/wp/v2/posts?_fields=id,title,slug`, {
+    headers: headers,
+    next: { revalidate: 3600 } // Revalidate every hour
+  });
+  if (!res.ok) throw new Error('Failed to fetch posts');
+  return res.json();
+}
+
 export async function getPostBySlug(slug: string): Promise<Post> {
   const headers = getAuthHeaders();
-  // We remove the revalidate option to ensure the page is always dynamic
   const res = await fetch(`${process.env.NEXT_PUBLIC_WORDPRESS_API_URL}/wp/v2/posts?_fields=id,title,content&slug=${slug}`, {
     headers: headers,
-    cache: 'no-store' // This forces dynamic rendering
+    cache: 'no-store'
   });
   if (!res.ok) throw new Error('Failed to fetch post');
   const posts: Post[] = await res.json();
