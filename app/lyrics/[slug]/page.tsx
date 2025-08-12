@@ -1,76 +1,26 @@
-// app/page.tsx
-import { getPostsByCategory } from "@/lib/data-fetching";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+// app/lyrics/[slug]/page.tsx
+import { getPostBySlug } from "@/lib/data-fetching";
+import { notFound } from "next/navigation";
 
-export default async function HomePage() {
-  // Add "malayalam" to the fetch list
-  const [malayalamPosts, hindiPosts, punjabiPosts] = await Promise.all([
-    getPostsByCategory("malayalam"),
-    getPostsByCategory("hindi"),
-    getPostsByCategory("punjabi"),
-  ]);
+export default async function LyricPage({ params }: { params: { slug: string } }) {
+  const post = await getPostBySlug(params.slug);
 
-  return (
-    <main className="container mx-auto px-4 py-8">
-      <div className="text-center my-8">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-hover dark:from-dark-primary dark:to-dark-hover">
-            A Treasury of Lyrics
-          </h1>
-          <p className="mt-4 text-lg text-secondary dark:text-dark-secondary">Discover the words behind the music.</p>
-      </div>
-      
-      <Tabs defaultValue="malayalam" className="w-full mt-12">
-        <TabsList className="grid w-full grid-cols-3 bg-secondary/10 dark:bg-dark-secondary/10">
-          <TabsTrigger value="malayalam">Malayalam</TabsTrigger>
-          <TabsTrigger value="hindi">Hindi</TabsTrigger>
-          <TabsTrigger value="punjabi">Punjabi</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="malayalam">
-          <PostGrid posts={malayalamPosts} />
-        </TabsContent>
-        <TabsContent value="hindi">
-          <PostGrid posts={hindiPosts} />
-        </TabsContent>
-        <TabsContent value="punjabi">
-          <PostGrid posts={punjabiPosts} />
-        </TabsContent>
-      </Tabs>
-    </main>
-  );
-}
-
-function PostGrid({ posts }: { posts: Awaited<ReturnType<typeof getPostsByCategory>> }) {
-  if (!posts || posts.length === 0) {
-    return <p className="text-center text-secondary dark:text-dark-secondary py-12">No posts available in this category.</p>;
+  if (!post) {
+    notFound();
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 py-8">
-      {posts.map((post) => {
-        const titleParts = post.title.rendered.split(' | ');
-        const songTitle = titleParts[0];
-        const artists = titleParts.slice(1).join(', ');
-
-        return (
-          <a href={`/lyrics/${post.slug}`} key={post.id} className="block group">
-            <Card className="h-full border-secondary/20 dark:border-dark-secondary/20 group-hover:border-primary dark:group-hover:border-dark-primary transition-all duration-300 transform group-hover:scale-105">
-              <CardHeader>
-                <CardTitle 
-                  className="text-lg font-bold text-text dark:text-dark-text"
-                  dangerouslySetInnerHTML={{ __html: songTitle }}
-                />
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-secondary dark:text-dark-secondary truncate"
-                   dangerouslySetInnerHTML={{ __html: artists }}
-                />
-              </CardContent>
-            </Card>
-          </a>
-        );
-      })}
-    </div>
+    <main className="flex min-h-screen flex-col items-center p-24">
+      <div className="w-full max-w-2xl">
+        <h1
+          className="text-4xl font-bold mb-8 text-center"
+          dangerouslySetInnerHTML={{ __html: post.title.rendered }}
+        />
+        <div
+          className="prose lg:prose-xl dark:prose-invert" // Added dark mode prose styles
+          dangerouslySetInnerHTML={{ __html: post.content.rendered }}
+        />
+      </div>
+    </main>
   );
 }
