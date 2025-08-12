@@ -3,12 +3,19 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Apply theme colors */
 @layer base {
-  body {
-    @apply bg-background text-text;
+  :root {
+    --background: 240 14% 97%; /* #FAF7F0 */
+    --foreground: 0 0% 7%;     /* #1C1C1C */
   }
-  .dark body {
-    @apply bg-dark-background text-dark-text;
+ 
+  .dark {
+    --background: 0 0% 12%;    /* #1F1F1F */
+    --foreground: 0 0% 95%;    /* #F1F1F1 */
   }
+}
+
+body {
+  color: hsl(var(--foreground));
+  background: hsl(var(--background));
 }

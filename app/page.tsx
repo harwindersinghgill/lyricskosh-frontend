@@ -5,27 +5,32 @@ export default async function HomePage() {
   const posts = await getAllPosts();
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-24">
-      <h1 className="text-4xl font-bold mb-8">Lyricskosh</h1>
-
-      <div className="w-full max-w-2xl">
-        <h2 className="text-2xl mb-4">Latest Lyrics</h2>
-
-        {posts.length === 0 ? (
-          <p className="text-gray-600">No posts available right now.</p>
-        ) : (
-          <ul className="list-disc pl-5">
-            {posts.map((post) => (
-              <li key={post.id} className="mb-2">
-                <a
-                  href={`/lyrics/${post.slug}`}
-                  className="text-lg text-blue-600 hover:underline"
-                  dangerouslySetInnerHTML={{ __html: post.title.rendered.replace(/ \|/g, " ") }}
-                />
-              </li>
-            ))}
-          </ul>
-        )}
+    <main className="flex flex-col items-center px-4">
+      <div className="w-full max-w-4xl">
+        <div className="text-center my-12">
+            <h1 className="text-5xl font-extrabold tracking-tight">A Treasury of Lyrics</h1>
+            <p className="mt-4 text-lg text-secondary dark:text-dark-secondary">Discover the words behind the music.</p>
+        </div>
+        
+        <div className="mt-8">
+          <h2 className="text-3xl font-bold border-b-2 border-primary dark:border-dark-primary pb-2 mb-6">Latest Lyrics</h2>
+          
+          {posts.length === 0 ? (
+            <p className="text-secondary dark:text-dark-secondary">No posts available right now.</p>
+          ) : (
+            <ul className="space-y-4">
+              {posts.map((post) => (
+                <li key={post.id}>
+                  <a 
+                    href={`/lyrics/${post.slug}`} 
+                    className="text-xl font-semibold hover:text-primary dark:hover:text-dark-primary transition-colors"
+                    dangerouslySetInnerHTML={{ __html: post.title.rendered.replace(/ \|/g, ' • ') }}
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </main>
   );
