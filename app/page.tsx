@@ -10,16 +10,28 @@ type Post = {
 };
 
 // This function fetches the data from our WordPress backend
+// app/page.tsx -> getPosts function
+
 async function getPosts() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_WORDPRESS_API_URL}/wp/v2/posts?_fields=id,title,slug`);
-  
-  // Check if the request was successful
+  // NEW: Import authentication libraries
+  const base64 = require('base-64');
+
+  // NEW: Create the headers for the server-side request
+  const headers = {
+    'Authorization': 'Basic ' + base64.encode(`${process.env.WP_USER}:${process.env.WP_PASSWORD}`),
+    'CF-Access-Client-Id': process.env.CF_CLIENT_ID || '',
+    'CF-Access-Client-Secret': process.env.CF_CLIENT_SECRET || ''
+  };
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WORDPRESS_API_URL}/wp/v2/posts?_fields=id,title,slug`, {
+    // NEW: Add the headers to the fetch request
+    headers: headers
+  });
+
   if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
     throw new Error('Failed to fetch data from WordPress');
   }
 
-  // Parse the JSON response
   const posts: Post[] = await res.json();
   return posts;
 }
