@@ -1,16 +1,12 @@
 // app/lyrics/[slug]/page.tsx
 import { getPostBySlug } from "@/lib/data-fetching";
 
-type LyricPageProps = {
-    params: {
-        slug: string;
-    }
-}
-
-export default async function LyricPage({ params }: LyricPageProps) {
+// This is the simplified component definition that resolves the build error.
+export default async function LyricPage({ params }: { params: { slug: string } }) {
   const post = await getPostBySlug(params.slug);
 
   if (!post) {
+    // This could be replaced with a call to notFound() from 'next/navigation'
     return <div>Post not found.</div>;
   }
 
@@ -22,7 +18,7 @@ export default async function LyricPage({ params }: LyricPageProps) {
           dangerouslySetInnerHTML={{ __html: post.title.rendered }}
         />
         <div 
-          className="prose lg:prose-xl"
+          className="prose lg:prose-xl" // Basic styling for the content
           dangerouslySetInnerHTML={{ __html: post.content.rendered }}
         />
       </div>
