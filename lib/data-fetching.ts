@@ -1,18 +1,14 @@
 // lib/data-fetching.ts
 import 'server-only';
+// THIS LINE IS CRITICAL AND HAS BEEN RESTORED
 const base64 = require('base-64');
 
 function getAuthHeaders() {
   const WP_USER = process.env.WP_USER ?? '';
   const WP_PASSWORD = process.env.WP_PASSWORD ?? '';
-  // The new secret key from Vercel environment variables
-  const WORDPRESS_AUTH_KEY = process.env.WORDPRESS_AUTH_KEY ?? '';
-
   return {
     'Authorization': 'Basic ' + base64.encode(`${WP_USER}:${WP_PASSWORD}`),
     'Content-Type': 'application/json',
-    // The new secret header that the WAF rule will check for
-    'x-custom-auth-key': WORDPRESS_AUTH_KEY
   };
 }
 
@@ -23,14 +19,25 @@ export type Post = {
   slug: string;
 };
 
-export async function getAllPosts(): Promise<Post[]> {
-  const headers = getAuthHeaders();
-  const res = await fetch(`${process.env.NEXT_PUBLIC_WORDPRESS_API_URL}/wp/v2/posts?_fields=id,title,slug`, {
-    headers: headers,
-    next: { revalidate: 3600 }
-  });
-  if (!res.ok) throw new Error('Failed to fetch posts');
-  return res.json();
+export async function getPostsByCategory(categorySlug: string): Promise<Post[]> {
+    const headers = getAuthHeaders();
+    const catRes = await fetch(`${process.env.NEXT_PUBLIC_WORDPRESS_API_URL}/wp/v2/language?slug=${categorySlug}`, { headers });
+    if (!catRes.ok) {
+        console.error(`Failed to fetch category ID for slug: ${categorySlug}`);
+        return [];
+    }
+    const categories = await catRes.json();
+    if (categories.length === 0) {
+        return [];
+    }
+    const categoryId = categories[0].id;
+    
+    const postsRes = await fetch(`${process.env.NEXT_PUBLIC_WORDPRESS_API_URL}/wp/v2/posts?_fields=id,title,slug&language=${categoryId}&per_page=12`, { headers, next: { revalidate: 3600 } });
+    if (!postsRes.ok) {
+        console.error(`Failed to fetch posts for category ${categorySlug}`);
+        return [];
+    }
+    return postsRes.json();
 }
 
 export async function getPostBySlug(slug: string): Promise<Post> {
