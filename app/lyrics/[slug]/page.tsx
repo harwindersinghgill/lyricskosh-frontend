@@ -1,21 +1,20 @@
 // app/lyrics/[slug]/page.tsx
+import { getAllPosts, getPostBySlug } from "@/lib/data-fetching";
+import { notFound } from "next/navigation";
 
-// Tell Next/Cloudflare to run this route on the Edge runtime.
-export const runtime = 'edge';
+// This new function fetches all slugs at build time to pre-render the pages
+export async function generateStaticParams() {
+  const posts = await getAllPosts();
+  return posts.map((post) => ({
+    slug: post.slug,
+  }));
+}
 
-import { getPostBySlug } from "@/lib/data-fetching";
-
-export default async function LyricPage(props: any) {
-  const slug = props?.params?.slug;
-
-  if (!slug) {
-    return <div>Post not found.</div>;
-  }
-  
-  const post = await getPostBySlug(slug);
+export default async function LyricPage({ params }: { params: { slug: string } }) {
+  const post = await getPostBySlug(params.slug);
 
   if (!post) {
-    return <div>Post not found.</div>;
+    notFound(); // Use Next.js's built-in 404 page
   }
 
   return (
