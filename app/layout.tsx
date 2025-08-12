@@ -1,15 +1,34 @@
-// app/theme-provider.tsx
-"use client";
+// app/layout.tsx
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+// Import the ThemeProvider from our new components directory
+import { ThemeProvider } from "@/components/theme-provider";
 
-import * as React from "react";
-import { ThemeProvider as NextThemesProvider } from "next-themes";
+const inter = Inter({ subsets: ["latin"] });
 
-// This is a more robust way to define the component's props
-type ThemeProviderProps = {
-  children: React.ReactNode;
-  [key: string]: any;
+export const metadata: Metadata = {
+  title: "Lyricskosh - A Treasury of Lyrics",
+  description: "Find lyrics to all your favorite songs.",
 };
 
-export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
-  return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </body>
+    </html>
+  );
 }
