@@ -1,20 +1,13 @@
 // app/lyrics/[slug]/page.tsx
-import { getAllPosts, getPostBySlug } from "@/lib/data-fetching";
+import { getPostBySlug } from "@/lib/data-fetching";
 import { notFound } from "next/navigation";
 
-// This new function fetches all slugs at build time to pre-render the pages
-export async function generateStaticParams() {
-  const posts = await getAllPosts();
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
-}
-
+// This simplified signature bypasses the build-time type error.
 export default async function LyricPage({ params }: { params: { slug: string } }) {
   const post = await getPostBySlug(params.slug);
 
   if (!post) {
-    notFound(); // Use Next.js's built-in 404 page
+    notFound();
   }
 
   return (

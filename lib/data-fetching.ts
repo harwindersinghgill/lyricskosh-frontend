@@ -18,31 +18,13 @@ export type Post = {
   slug: string;
 };
 
-// This function now handles pagination to get ALL posts, not just the first 10
-export async function getAllPosts(): Promise<Post[]> {
-  const headers = getAuthHeaders();
-  const allPosts: Post[] = [];
-  let page = 1;
-  while (true) {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_WORDPRESS_API_URL}/wp/v2/posts?_fields=id,title,slug&per_page=100&page=${page}`, {
-      headers: headers,
-    });
-    if (!res.ok) throw new Error('Failed to fetch posts');
-    const posts: Post[] = await res.json();
-    if (posts.length === 0) {
-      break; // No more posts to fetch
-    }
-    allPosts.push(...posts);
-    page++;
-  }
-  return allPosts;
-}
-
+// This is the only function we need now for the lyrics pages.
 export async function getPostBySlug(slug: string): Promise<Post> {
   const headers = getAuthHeaders();
+  // We remove the revalidate option to ensure the page is always dynamic
   const res = await fetch(`${process.env.NEXT_PUBLIC_WORDPRESS_API_URL}/wp/v2/posts?_fields=id,title,content&slug=${slug}`, {
     headers: headers,
-    next: { revalidate: 3600 }
+    cache: 'no-store' // This forces dynamic rendering
   });
   if (!res.ok) throw new Error('Failed to fetch post');
   const posts: Post[] = await res.json();
