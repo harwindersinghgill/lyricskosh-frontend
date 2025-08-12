@@ -5,10 +5,15 @@ const base64 = require('base-64');
 function getAuthHeaders() {
   const WP_USER = process.env.WP_USER ?? '';
   const WP_PASSWORD = process.env.WP_PASSWORD ?? '';
+  const CF_CLIENT_ID = process.env.CF_CLIENT_ID ?? '';
+  const CF_CLIENT_SECRET = process.env.CF_CLIENT_SECRET ?? '';
 
   return {
     'Authorization': 'Basic ' + base64.encode(`${WP_USER}:${WP_PASSWORD}`),
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    // Add the Cloudflare Access headers back in
+    'CF-Access-Client-Id': CF_CLIENT_ID,
+    'CF-Access-Client-Secret': CF_CLIENT_SECRET
   };
 }
 
