@@ -11,7 +11,7 @@ function getAuthHeaders() {
   return {
     'Authorization': 'Basic ' + base64.encode(`${WP_USER}:${WP_PASSWORD}`),
     'Content-Type': 'application/json',
-    // Add the Cloudflare Access headers back in
+    // Add the Cloudflare Access headers
     'CF-Access-Client-Id': CF_CLIENT_ID,
     'CF-Access-Client-Secret': CF_CLIENT_SECRET
   };
