@@ -2,7 +2,6 @@
 import { getAllPosts } from "@/lib/data-fetching";
 
 export default async function HomePage() {
-  // getAllPosts() now returns [] instead of throwing on fetch errors
   const posts = await getAllPosts();
 
   return (
@@ -21,7 +20,6 @@ export default async function HomePage() {
                 <a
                   href={`/lyrics/${post.slug}`}
                   className="text-lg text-blue-600 hover:underline"
-                  // keep using dangerouslySetInnerHTML for the WP title HTML
                   dangerouslySetInnerHTML={{ __html: post.title.rendered.replace(/ \|/g, " ") }}
                 />
               </li>
