@@ -1,13 +1,34 @@
-// components/theme-provider.tsx
-"use client";
+// app/layout.tsx
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+// IMPORTANT: This must be an 'import', not an 'export'
+import { ThemeProvider } from "@/components/theme-provider";
 
-import * as React from "react";
-import { ThemeProvider as NextThemesProvider } from "next-themes";
+const inter = Inter({ subsets: ["latin"] });
 
-// This is the robust, version-proof way to get the component's props type.
-export function ThemeProvider({
+export const metadata: Metadata = {
+  title: "Lyricskosh - A Treasury of Lyrics",
+  description: "Find lyrics to all your favorite songs.",
+};
+
+export default function RootLayout({
   children,
-  ...props
-}: React.ComponentProps<typeof NextThemesProvider>) {
-  return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </body>
+    </html>
+  );
 }
