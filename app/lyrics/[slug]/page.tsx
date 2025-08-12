@@ -2,6 +2,7 @@
 import { getPostBySlug } from "@/lib/data-fetching";
 import { notFound } from "next/navigation";
 
+// This simplified signature bypasses the build-time type error.
 export default async function LyricPage({ params }: { params: { slug: string } }) {
   const post = await getPostBySlug(params.slug);
 
@@ -17,7 +18,7 @@ export default async function LyricPage({ params }: { params: { slug: string } }
           dangerouslySetInnerHTML={{ __html: post.title.rendered }}
         />
         <div
-          className="prose lg:prose-xl dark:prose-invert" // Added dark mode prose styles
+          className="prose lg:prose-xl"
           dangerouslySetInnerHTML={{ __html: post.content.rendered }}
         />
       </div>
