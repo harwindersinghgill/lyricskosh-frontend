@@ -2,18 +2,18 @@
 import { getPostBySlug } from "@/lib/data-fetching";
 import { notFound } from "next/navigation";
 
-// Using 'props: any' to bypass the persistent build environment type error.
+// If you previously exported `runtime = 'edge'`, it's fine to keep it if you need edge.
+// export const runtime = 'edge';
+
 export default async function LyricPage(props: any) {
   const slug = props?.params?.slug;
-
   if (!slug) {
-    notFound();
+    return notFound();
   }
-  
-  const post = await getPostBySlug(slug);
 
+  const post = await getPostBySlug(String(slug));
   if (!post) {
-    notFound();
+    return notFound();
   }
 
   return (
